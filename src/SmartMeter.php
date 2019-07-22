@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace mstroink\SmartMeter;
 
-use mstroink\SmartMeter\Telegram\Parser;
 use mstroink\SmartMeter\Reader\Reader;
 use mstroink\SmartMeter\Telegram\Obis\Mapper;
+use mstroink\SmartMeter\Telegram\Parser;
+
 /**
  * Base class for the Telegram Parser
  */
@@ -48,7 +49,7 @@ class SmartMeter
      * @param array $config of the reader
      * @return SmartMeter
      */
-    static public function configure($reader, $config): SmartMeter
+    public static function configure($reader, $config): SmartMeter
     {
         $input = $config['input'] ?? null;
         if (!$input) {
@@ -68,7 +69,7 @@ class SmartMeter
     * @param array $config reader config
     * @return Reader
     */
-    static private function createReader(string $name, string $input, array $config): Reader
+    private static function createReader(string $name, string $input, array $config): Reader
     {
         $class = "\mstroink\SmartMeter\Reader\\" . ucfirst($name);
 
@@ -83,9 +84,8 @@ class SmartMeter
      * Create Parser Object
      * @return Parser
      */
-    static private function createParser(): Parser
+    private static function createParser(): Parser
     {
         return new Parser(new Mapper());
     }
-
 }

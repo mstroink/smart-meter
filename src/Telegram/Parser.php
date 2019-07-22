@@ -3,10 +3,9 @@ declare(strict_types = 1);
 
 namespace mstroink\SmartMeter\Telegram;
 
-use mstroink\SmartMeter\Telegram\Obis\ReferencesInterface;
 use mstroink\SmartMeter\Telegram\Exception\InvalidTelegramException;
+use mstroink\SmartMeter\Telegram\Obis\ReferencesInterface;
 use mstroink\SmartMeter\Transform\TransformerInterface;
-use RuntimeException;
 
 /**
  * Telegram Parser Class
@@ -41,10 +40,14 @@ class Parser
         $data = [];
         foreach (explode(ReferencesInterface::LINE_SEPERATOR, $telegram) as $line) {
             $id = $this->extractId($line);
-            if (!$id) continue;
+            if (!$id) {
+                continue;
+            }
 
             $reference = $this->getReference($id);
-            if (!$reference) continue;
+            if (!$reference) {
+                continue;
+            }
 
             $values = $this->extractValues($line);
             $transformers = (array)$reference['transform'];
@@ -58,11 +61,11 @@ class Parser
     }
 
     /**
-     * Extract all values from telegram line
+     * Extract values from telegram line
      * @param  string $line telegram line
      * @return array matched values
      */
-    protected function extractValues(string $line) : array
+    protected function extractValues(string $line): array
     {
         preg_match_all("/((?<=\()[0-9a-zA-Z\.\*]{0,}(?=\)))+/", $line, $match);
 
@@ -75,20 +78,18 @@ class Parser
      * @param array $transformers used to transform the values
      * @return array array transformed values
      */
-    protected function parseValues(array $values, array $transformers) : array
+    protected function parseValues(array $values, array $transformers): array
     {
         $data = [];
         for ($i = 0; $i < count($values); $i++) {
             $value = $values[$i];
             $transformer = $transformers[$i] ?? false;
 
-            if (!$transformer) break;
-
-            if ($value === "") { //do not transform empty strings
-                $data[] = $value;
-            } else {
-                $data[] = $this->transform($value, $transformer);
+            if (!$transformer) {
+                break;
             }
+            
+            $data[] = ($value !== "") ? $this->transform($value, $transformer) : null;
         }
 
         return $data;
@@ -112,23 +113,15 @@ class Parser
      */
     protected function transform(string $string, string $transformer)
     {
-        if ($transformer == null) {
-            return $string;
-        }
-
         if (strpos($transformer, '\\') === false) {
             $transformer = '\mstroink\SmartMeter\Transform\\' . ucfirst($transformer) . 'Transformer';
         }
 
-        $callable = new $transformer($string);
-
-        if (!$callable instanceof TransformerInterface) {
-            throw new RuntimeException("Transformer must implement TransformerInterface.");
+        if (!is_subclass_of($transformer, TransformerInterface::class)) {
+            throw new \RuntimeException("Transformer must implement TransformerInterface.");
         }
 
-        $callable = [$callable, 'transform'];
-
-        return $callable($string);
+        return call_user_func($transformer . '::transform', $string);
     }
 
     /**

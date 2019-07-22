@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace mstroink\SmartMeter\Transform;
+
 /**
  * @inheritDoc
  */
@@ -10,7 +11,7 @@ final class TimestampTransformer implements TransformerInterface
     /**
      * @inheritDoc
      */
-    public function transform($string)
+    public static function transform($string)
     {
         preg_match("/^(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2}).$/", $string, $match);
 

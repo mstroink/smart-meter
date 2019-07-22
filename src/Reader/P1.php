@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace mstroink\SmartMeter\Reader;
 
 use mstroink\SmartMeter\Reader\Exception\InvalidOutputException;
+
 /**
  * Read Telegram from p1
  */

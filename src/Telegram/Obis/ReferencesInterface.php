@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 namespace mstroink\SmartMeter\Telegram\Obis;
+
 /**
  * References to the OBIS (Object Identification System)
  */

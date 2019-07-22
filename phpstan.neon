@@ -1,0 +1,8 @@
+parameters:
+	autoload_files:
+		- vendor/autoload.php
+	level: 5
+	paths:
+		- src
+		- tests
+	excludes_analyse:

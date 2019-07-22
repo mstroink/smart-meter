@@ -2,10 +2,10 @@
 
 namespace mstroink\SmartMeter\Test\Telegram;
 
-use PHPUnit\Framework\TestCase;
-use mstroink\SmartMeter\Telegram\Parser;
-use mstroink\SmartMeter\Telegram\Obis\Mapper;
 use mstroink\SmartMeter\Telegram\Exception\InvalidTelegramException;
+use mstroink\SmartMeter\Telegram\Obis\Mapper;
+use mstroink\SmartMeter\Telegram\Parser;
+use PHPUnit\Framework\TestCase;
 
 class ParserTest extends TestCase
 {
@@ -105,7 +105,7 @@ class ParserTest extends TestCase
                 "0-0:96.3.10(1)", ['switch_position_electricity' => 1]
             ],
             'power_failure_log' => [
-                "1-0:99.97.0()", ['power_failure_log' => ""]
+                "1-0:99.97.0()", ['power_failure_log' => null]
             ],
             'voltage_sag_count_l1' => [
                 "1-0:32.32.0(00005)", ['voltage_sag_count_l1' => 5]
@@ -126,7 +126,7 @@ class ParserTest extends TestCase
                 "1-0:72.36.0(00000)", ['voltage_swell_count_l3' => 0]
             ],
             'text_message_long' => [
-                "0-0:96.13.0()", ['text_message_long' => ""]
+                "0-0:96.13.0()", ['text_message_long' => null]
             ],
             'instantaneous_voltage_l1' => [
                 "1-0:32.7.0(239.0*V)", ['instantaneous_voltage_l1' => 239.0]
@@ -179,23 +179,5 @@ class ParserTest extends TestCase
                 ]
             ]
         ];
-    }
-
-    /**
-     * Call protected/private method of a class.
-     *
-     * @param object &$object    Instantiated object that we will run method on.
-     * @param string $methodName Method name to call
-     * @param array  $parameters Array of parameters to pass into method.
-     *
-     * @return mixed Method return.
-     */
-    private function invokeMethod(&$object, $methodName, array $parameters = array())
-    {
-        $reflection = new \ReflectionClass(get_class($object));
-        $method = $reflection->getMethod($methodName);
-        $method->setAccessible(true);
-
-        return $method->invokeArgs($object, $parameters);
     }
 }
